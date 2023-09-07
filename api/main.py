@@ -25,7 +25,7 @@ os.environ["OPENAI_API_KEY"] = ''
 @app.route('/')
 @cross_origin(support_credentials=True)
 def hello():
-    return "Welcome to FIRE APP by Team SPARK"
+    return "Welcome to Raku-San APP by Team SPARK"
 
 
 def get_text_chunks(text):
