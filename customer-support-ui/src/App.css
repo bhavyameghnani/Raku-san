@@ -6,6 +6,16 @@
   height: 40vmin;
   pointer-events: none;
 }
+.blink {
+  animation: blinker .90s linear infinite;
+  color: red;
+  font-family: sans-serif;
+}
+@keyframes blinker {
+  50% {
+      opacity: 0;
+  }
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {

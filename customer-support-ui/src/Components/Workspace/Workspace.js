@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Header from "../Header/Header";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Spinner from "../Spinner";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
+import axiosService from "../../Service/api";
 import Grid from "@material-ui/core/Grid";
 import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import ServiceCall from "../../Service/ServiceCall";
+import { clsx } from 'clsx';
+
 import AssistantIcon from "@material-ui/icons/Assistant";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -57,22 +60,44 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     color: theme.palette.text.secondary,
   },
+  promotion:
+  {
+    backgroundImage:`url("https://global.rakuten.com/corp/news/assets/img/press/20200930_5G_2_en.JPG")`,
+        backgroundRepeat:'no-repeat',
+        backgroundSize:'cover'
+  },
+  promotion1:
+  {
+    backgroundImage:`url("https://gaijinpot.scdn3.secure.raxcdn.com/app/uploads/sites/4/2021/04/GPBlog_MobilePlans_ComparisonTable-1024x640.jpg")`,
+        backgroundRepeat:'no-repeat',
+        backgroundSize:'cover'
+  },
+  promotion2:
+  {
+    backgroundImage:`url("https://network.mobile.rakuten.co.jp/assets/img/fee/saikyo-plan/en/ladder-pc.png")`,
+        backgroundRepeat:'no-repeat',
+        backgroundSize:'cover'
+  }
 }));
 
 export default function Workspace() {
   const classes = useStyles();
 
-  const [ideaPrompt, setIdeaPrompt] = useState([
+  const [ideaPrompt, setIdeaPrompt] = useState(
     "Please help in solving the mentioned query by looking into the tech support documents. Please share steps-wise procedure to solve the issue",
-    "Prompt2",
-  ]);
+    );
 
   const [loader, setLoader] = React.useState(false);
   const [ideaDetails, setIdeaDetails] = useState();
+  const [url, setUrl] = useState();
+
+  const [indexdata, setindexdata] = useState(0);
 
   const [file1, setFile1] = useState();
   const [file, setFile] = useState();
   const [file2, setFile2] = useState();
+  const [userdatachange,setuserdatachange]=React.useState(true)
+  const [chatgpthistory,setchatgpthistory]=React.useState([])
 
   const [open, setOpen] = React.useState(false);
 
@@ -80,22 +105,137 @@ export default function Workspace() {
     setOpen(true);
   };
 
+  
+
+  const handleClose1 = (e) => {
+    setOpen(false);
+    callapi1(e)
+    setIdeaPrompt('')
+  };
+
+
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleIdeaField = (event) => {
-    setIdeaDetails(event.target.value);
+    
+    setuserquery(event.target.value)
+    
   };
 
-  function handleIdeaDetails() {
-    console.log(ideaDetails);
-    setLoader(true);
-    ServiceCall.generateIdeaDetails(ideaDetails).then((response) => {
-      console.log(response.data);
-      setLoader(false);
-    });
+  const handleIdeaField1 = (event) => {
+    
+    setIdeaDetails(event.target.value)
+    
+  };
+
+  
+  const [question_index,setquestion_index]=React.useState(0)
+
+  function handleIdeaDetails(e) {
+    
+   let old_data_new=[...chatgpthistory]
+            console.log("APi old Data",old_data_new)
+            old_data_new.push({'response':ideaDetails,'url':url})
+            setchatgpthistory(old_data_new)
+            setIdeaDetails('')
   }
+
+  function callapi(event)
+  {
+    setLoader(true)
+    let old_data=[...chatgpthistory]
+    old_data.push({'response':userquery})
+    console.log(" old Data",old_data)
+    setchatgpthistory(old_data)
+
+    axiosService.get("generateIdeaDetails?prompt="+userquery).then(
+          response => 
+          {
+
+            setIdeaDetails(response.data.answer)
+            setUrl(response.data.url)
+              
+            
+              setuserquery('')
+              setLoader(false)
+                      }
+          
+          )
+          .catch(error => 
+              
+              {
+                console.log(error)
+                  setLoader(false)
+                  let old_data_new=[...chatgpthistory]
+                  console.log("APi old Data",old_data_new)
+                  old_data_new.push({'response':"Something Went Wrong. Please try again after sometime"})
+                  setchatgpthistory(old_data_new)
+              }
+          )
+
+
+  }
+
+  function callapi1(event)
+  {
+    setLoader(true)
+  
+    axiosService.get("generateIdeaDetails?prompt="+ideaPrompt).then(
+          response => 
+          {
+
+            setIdeaDetails(response.data.answer)
+              
+            
+              setuserquery('')
+              setLoader(false)
+                      }
+          
+          )
+          .catch(error => 
+              
+              {
+                console.log(error)
+                  setLoader(false)
+                  // let old_data_new=[...chatgpthistory]
+                  // console.log("APi old Data",old_data_new)
+                  // old_data_new.push({'response':"Something Went Wrong. Please try again after sometime"})
+                  // setchatgpthistory(old_data_new)
+              }
+          )
+
+
+  }
+  // function callApi()
+  // {
+  //   axiosService.post("getresponsetest?question_index="+question_index,chatgpthistory).then(
+  //     response => 
+  //     {
+          
+  //         setchatgpthistory(response.data.data)
+  //         let oldindex=[...question_index]
+  //         oldindex=oldindex+1
+  //         setquestion_index(oldindex)   
+  //         setTimeout(callApi,2000)
+  //     }
+      
+  //     )
+  //     .catch(error => 
+          
+  //         {
+  //           console.log(error)
+  //             setLoader(false)
+  //             let old_data_new=[...chatgpthistory]
+  //             console.log("APi old Data",old_data_new)
+  //             old_data_new.push({'response':"Something Went Wrong. Please try again after sometime"})
+  //             setchatgpthistory(old_data_new)
+  //         }
+  //     )
+  // }
+
+  
 
   const handleFileChange = (event) => {
     setFile(event);
@@ -105,9 +245,21 @@ export default function Workspace() {
     setFile1(event);
   };
 
+  const [offer,setoffer]=React.useState(0)
   const handleFileChange2 = (event) => {
     setFile2(event);
   };
+  const [userquery,setuserquery]=React.useState('')
+
+  const MINUTE_MS = 5000;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setoffer(Math.floor(Math.random() * 3));
+    }, MINUTE_MS);
+  
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, [])
 
   return (
     <React.Fragment>
@@ -136,14 +288,15 @@ export default function Workspace() {
               multiline
               rows={6}
               fullWidth
-              value={ideaPrompt[0]}
+              onChange={(e)=>setIdeaPrompt(e.target.value)}
+              value={ideaPrompt}
               variant="outlined"
             />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Close
+          <Button onClick={(e)=>handleClose1(e)} color="primary">
+            Submit
           </Button>
         </DialogActions>
       </Dialog>
@@ -269,7 +422,7 @@ export default function Workspace() {
               </Grid>
             </Grid>
             <Grid container item xs={12} spacing={2}>
-              <Grid item xs={4}>
+              {/* <Grid item xs={4}>
                 <Accordion>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
@@ -349,10 +502,93 @@ export default function Workspace() {
                     </Button>
                   </CardActions>
                 </Card>
+              </Grid> */}
+              <Grid item xs={4}>
+                <Paper className={classes.paper}>
+                <Typography style={{borderBottom:'2px solid lightgrey',textAlign:'left',fontWeight:'bolder'}}
+                
+                
+                className="blink">Ongoing Offers</Typography>
+                  <Grid item container lg={12} sm={12} md={12} 
+                  
+                 
+
+                  className={clsx( {                  
+                    [classes.promotion]: (offer==0),    
+                    [classes.promotion1]: (offer==1),              
+
+                    [classes.promotion2]: (offer==2),              
+
+                    
+                  })}
+                  
+                  style={{minHeight:'255px',marginTop:'10px',maxHeight:'255px',overflow:'auto',border:'1px solid lightgrey'}}>
+
+                    
+                    
+                  </Grid>
+                  <Grid style={{paddingTop:'20px'}}
+                  
+                  ></Grid>
+                  <TextField
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    id="outlined-multiline-static"
+                    label="Customer Query"
+                    multiline
+                    maxRows={1}
+                    fullWidth
+                    value={userquery}
+                    variant="outlined"
+                    onChange={(e) => handleIdeaField(e)}
+                    onKeyPress={event => {
+                      if (event.key === 'Enter') {
+                          callapi(event)
+                      }
+                    }}                  />
+                </Paper>
               </Grid>
               <Grid item xs={4}>
                 <Paper className={classes.paper}>
-                  <TextField
+                  <Grid item container lg={12} sm={12} md={12} style={{minHeight:'365px',maxHeight:'365px',overflow:'auto',border:'1px solid lightgrey',display:'block'}}>
+
+
+                    {chatgpthistory && chatgpthistory.map((row,index)=>
+                    
+                    (
+                      <Grid item container lg={12} sm={12} md={12}>
+
+                        {index%2==0 && <Grid lg={12} md={12} sm={12} style={{textAlign:'right',padding:'10px 10px 0px 10px',marginLeft:'100px'}}>
+
+                          
+                          
+                          <p style={{border:'1px solid lightgrey',padding:'5px',borderRadius:'10px',backgroundColor:'lightgrey'}}>{row.response}</p></Grid>}
+                        {index%2!=0 && <Grid lg={12} md={12} sm={12} style={{textAlign:'left',padding:'0px 10px 10px 10px',marginRight:'100px'}}>
+                          
+                        <p style={{border:'1px solid lightgrey',padding:'5px',borderRadius:'10px',backgroundColor:'lightblue',
+                      display: 'grid' ,whiteSpace: 'pre-wrap',wordWrap:'break-word'
+                      }}>{row.response}</p>
+                          </Grid>}
+
+
+                          {row.url &&    <img style={{width:'25%',marginLeft:'6%'}}src={row.url} alt="Chat Conversation " />}
+
+                        </Grid>
+                    )
+                    )}
+
+                    {chatgpthistory.length==0 && 
+                    
+                    <Grid item container lg={12} sm={12} md={12}>
+                          <img style={{width:'53%',marginLeft:'26%'}}src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExYm1ycmNoam1zODBhbGlyc3M1eW92NzB3OHc5a2hxa2dyNGNtMjN4cSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/oH9EpHYhOtlIZipqpk/giphy.gif" alt="Chat Conversation " />
+
+                      </Grid>
+                    
+                    
+                    }
+                  </Grid>
+                  {/* <TextField
                     InputLabelProps={{
                       shrink: true,
                     }}
@@ -365,7 +601,7 @@ export default function Workspace() {
                     value={ideaDetails}
                     variant="outlined"
                     onChange={(e) => handleIdeaField(e)}
-                  />
+                  /> */}
                 </Paper>
               </Grid>
               <Grid item xs={4}>
@@ -388,30 +624,29 @@ export default function Workspace() {
                       shrink: true,
                     }}
                     id="outlined-multiline-static"
-                    label="Your Query"
+                    label="Response from Gen AI"
                     multiline
                     rows={12}
-                    defaultValue={"Please add your query here ..."}
                     fullWidth
                     value={ideaDetails}
                     variant="outlined"
-                    onChange={(e) => handleIdeaField(e)}
+                    onChange={(e) => handleIdeaField1(e)}
                   />
                   <br /> <br />
                   <Grid container item xs={12} spacing={2}>
-                    <Grid item xs={2}>
+                    <Grid item xs={2} style={{cursor:'pointer'}}>
                       <AssistantIcon
                         color="secondary"
                         fontSize="large"
                         onClick={handleClickOpen}
                       />
                     </Grid>
-                    <Grid item xs={10}>
+                    <Grid item xs={10} style={{cursor:'pointer'}}>
                       <Button
                         fullWidth
                         variant="contained"
                         color="secondary"
-                        onClick={handleIdeaDetails}
+                        onClick={(e)=>handleIdeaDetails(e)}
                       >
                         Enhance Response using Raku-san
                       </Button>

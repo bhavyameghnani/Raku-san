@@ -8,6 +8,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import { NavLink } from "react-router-dom";
+import { clsx } from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -25,13 +26,17 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     flexShrink: 0,
   },
+  borderbottom:
+  {
+    borderBottom:'3px solid lightblue'
+  },
 }));
 
 const sections = [
   { title: "Quick Search", url: "#/" },
-  { title: "Create Project Workspace", url: "#/workspace" },
-  { title: "My Profile Analytics", url: "#/profile" },
-  { title: "Contact us", url: "#/contact" },
+  { title: "Create Project Workspace", url: "#/" },
+  { title: "My Profile Analytics", url: "#/" },
+  { title: "Contact us", url: "#/" },
 ];
 
 export default function Header(props) {
@@ -66,14 +71,20 @@ export default function Header(props) {
         variant="dense"
         className={classes.toolbarSecondary}
       >
-        {sections.map((section) => (
+        {sections.map((section,index) => (
           <Link
             color="inherit"
             noWrap
+            // style={{borderBottom:'1px solid blue'}}
             key={section.title}
+            className={clsx( {                  
+              [classes.borderbottom]: index==0, 
+              [classes.toolbarLink]:true             
+              
+            })}
             variant="body2"
             href={section.url}
-            className={classes.toolbarLink}
+            // className={classes.toolbarLink}
           >
             {section.title}
           </Link>
