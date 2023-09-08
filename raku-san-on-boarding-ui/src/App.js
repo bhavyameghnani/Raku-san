@@ -1,6 +1,7 @@
 import "./App.css";
 import { Route, Switch, HashRouter } from "react-router-dom";
 import LoginPage from "./Components/LoginPage/LoginPage";
+import Affirmations from "./Components/Affirmations/Affirmations";
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <HashRouter>
         <Switch>
           <Route exact path="/" component={LoginPage} />
+          <Route exact path="/affirmations" component={Affirmations} />
         </Switch>
       </HashRouter>
     </div>
