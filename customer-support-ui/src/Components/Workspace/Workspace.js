@@ -22,6 +22,15 @@ import FileUpload from "react-material-file-upload";
 import WorkspaceFeaturedPost from "./WorkspaceFeaturedPost";
 import Avatar from "@material-ui/core/Avatar";
 import AvatarGroup from "@material-ui/lab/AvatarGroup";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -39,6 +48,9 @@ const useStyles = makeStyles((theme) => ({
   },
   root: {
     flexGrow: 1,
+  },
+  media: {
+    height: 150,
   },
   paper: {
     padding: theme.spacing(1),
@@ -246,19 +258,97 @@ export default function Workspace() {
                       />
                     </Grid>
                   </Grid>
-                  <Grid container item xs={12} spacing={2}>
+                  {/* <Grid container item xs={12} spacing={2}>
                     <Grid item xs={4}>
                       <Typography color="secondary" variant="h6" gutterBottom>
                         <b>Tech Docs, team structure</b>
                       </Typography>
                     </Grid>
-                  </Grid>
+                  </Grid> */}
                 </Paper>
               </Grid>
             </Grid>
             <Grid container item xs={12} spacing={2}>
               <Grid item xs={4}>
-                <Grid container item xs={12} spacing={2}></Grid>
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography className={classes.heading}>
+                      Accordion 1
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Suspendisse malesuada lacus ex, sit amet blandit leo
+                      lobortis eget.
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel2a-content"
+                    id="panel2a-header"
+                  >
+                    <Typography className={classes.heading}>
+                      Accordion 2
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Suspendisse malesuada lacus ex, sit amet blandit leo
+                      lobortis eget.
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel3a-content"
+                    id="panel3a-header"
+                  >
+                    <Typography className={classes.heading}>
+                      Disabled Accordion
+                    </Typography>
+                  </AccordionSummary>
+                </Accordion>
+                <br/>
+                <Card className={classes.root}>
+                  <CardActionArea>
+                    <CardMedia
+                      className={classes.media}
+                      image="https://media.buyee.jp/lp/images/2023/04/rakuten2305_title_text_en.png"
+                      title="Contemplative Reptile"
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="h2">
+                        Lizard
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        component="p"
+                      >
+                        Lizards are a widespread group of squamate reptiles,
+                        with over 6,000 species, ranging across all continents
+                        except Antarctica
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                  <CardActions>
+                    <Button size="small" color="primary">
+                      Share
+                    </Button>
+                    <Button size="small" color="primary">
+                      Learn More
+                    </Button>
+                  </CardActions>
+                </Card>
               </Grid>
               <Grid item xs={4}>
                 <Paper className={classes.paper}>
