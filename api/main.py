@@ -2,24 +2,26 @@ from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS, cross_origin
 import json
 import os
+import openai
 import base64
 from datetime import datetime
 from pymongo import MongoClient
 import urllib
 from bson.json_util import dumps
-import config
+# import config
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings, HuggingFaceInstructEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
-
+import openai
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
-
-os.environ["OPENAI_API_KEY"] = ''
+api_key="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"
+openai.api_key=api_key
+os.environ["OPENAI_API_KEY"] = api_key
 
 
 @app.route('/')
@@ -46,7 +48,7 @@ def get_vectorstore(text_chunks):
 
 
 def get_conversation_chain(vectorstore):
-    llm = ChatOpenAI(temperature=0.7, model_name='gpt-3.5-turbo')
+    llm = ChatOpenAI(temperature=0.2, model_name='gpt-3.5-turbo')
     memory = ConversationBufferMemory(
         memory_key='chat_history', return_messages=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(
@@ -57,21 +59,79 @@ def get_conversation_chain(vectorstore):
     return conversation_chain
 
 
-@app.route('/generateIdeaDetails', methods=['POST'])
+@app.route('/generateIdeaDetails', methods=['GET'])
 @cross_origin(support_credentials=True)
 def generateIdeaDetails():
-    ideaDetails = request.data.decode("utf-8")
-    print(type(ideaDetails))
-    print(ideaDetails)
+    
+    test_data=[
+  {
+    "title": "Device Compatibility Query",
+    "query": "I'm thinking of getting a new smartphone. How can I check if it's compatible with Rakuten Mobile's network?",
+    "url": "https://esimgohub.com/wp-content/uploads/2023/02/gif3.gif"
+  },
+  {
+    "title": "Roaming Assistance",
+    "query": "I'm traveling abroad soon. How can I make sure I can use my phone while I'm there?",
+    "url": "https://media3.giphy.com/media/dNVoT4sykcJi72bfhW/200w.gif?cid=790b7611003nkf2bsg5xw7jlhjpncp6gi0axxnsxjq1kewxh&ep=v1_gifs_search&rid=200w.gif&ct=g"
+  },
+  {
+    "title": "Billing Inquiry",
+    "query": "I received my bill, and there's a charge I don't understand. Can you explain it to me?",
+    "url": "https://media1.giphy.com/media/tlVIoU940wRDkMUqrp/200w_d.gif"
+  },
+  {
+    "title": "Voicemail Setup",
+    "query": "I've never set up my voicemail. Can you guide me on how to do that?",
+    "url": "https://images.squarespace-cdn.com/content/v1/5c253c6eb10598834858f4f8/1609730443692-9V0Q8LIAYC33VAW9O1FX/ezgif.com-gif-maker+%283%29.gif"
+  },
+  {
+    "title": "Network Outage Query",
+    "query": "My mobile data isn't working, and I can't make calls. Is there a network outage in my area?",
+    "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSecREYJQW0PPY8UdMiUV9DYt9pYMt5Vxua0g&usqp=CAU"
+  }
+]
 
+    ideaDetails = request.args.get("prompt")
+    
     text_chunks = get_text_chunks(ideaDetails)
     vectorstore = get_vectorstore(text_chunks)
     response = get_conversation_chain(vectorstore)
     result = response(
-        {"question": "Act as an Innovation specialits and domain expert. Your task is to elaborate the idea by looking into the existing industry and market trends in 7 to 8 lines"})
-    print(result['answer'])
-    return {'status': 'success', 'data': result['answer']}
-    # return "Well recieved"
+        {"question": "Act as a tech specialist your task is to provide consolidated resolutions for the user query. The response should not be more than 100-200 words. Also please response by keeping entire converstaion into consideration. Please note the user is 30 year and not much tech savy."})
+    prompt_answer=result['answer']
+    
+    json_prompt="""I will be providing you the customer query and array of json data which contains three fields title,query and url. Your task is to analyse customer query and give me the url which best suits based on the title and query. Provide only the one url. For example answer should be in this format Url : https://abc.com 
+        Customer Query : {0}
+        Json Data : {1}
+    """.format(ideaDetails,test_data)
+    url=get_chatgpt_response(json_prompt)
+    return {'answer':prompt_answer,'url':str(url).split(": ")[1]}
+    
+
+def get_chatgpt_response(prompt):
+
+    try:
+        model_engine = "text-davinci-003"
+    # Generate a response
+        completion = openai.Completion.create(
+            engine=model_engine,
+            prompt=prompt,
+            max_tokens=1024,
+            n=1,
+            stop=None,
+            temperature=0,
+        )
+
+        response = completion.choices[0].text
+        
+        return response
+    except Exception as e:
+        print(e)
+        print("Inside Exception")
+        return str(e)
+    # print(response)
+    
+    
 
 
 @app.route('/generateProblemStatement', methods=['POST'])
