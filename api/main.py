@@ -19,7 +19,7 @@ import openai
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
-api_key="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"
+api_key="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"
 openai.api_key=api_key
 os.environ["OPENAI_API_KEY"] = api_key
 
@@ -107,6 +107,26 @@ def generateIdeaDetails():
     url=get_chatgpt_response(json_prompt)
     return {'answer':prompt_answer,'url':str(url).split(": ")[1]}
     
+
+
+
+@app.route('/generateIdeaDetailsOnboard', methods=['GET'])
+@cross_origin(support_credentials=True)
+def generateIdeaDetailsOnboard():
+    
+    
+
+    ideaDetails = request.args.get("prompt")
+    
+    text_chunks = get_text_chunks(ideaDetails)
+    vectorstore = get_vectorstore(text_chunks)
+    response = get_conversation_chain(vectorstore)
+    json_prompt="Act as a lead tech support guy which is responsible to answer user query on why private information is required for rakhuten mobile app. Customer Query is : {0}".format(ideaDetails)
+    prompt_answer=get_chatgpt_response(json_prompt)
+    return {'answer':prompt_answer}
+    
+
+
 
 def get_chatgpt_response(prompt):
 
