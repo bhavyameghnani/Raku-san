@@ -19,7 +19,7 @@ import openai
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
-api_key="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"
+api_key="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"
 openai.api_key=api_key
 os.environ["OPENAI_API_KEY"] = api_key
 
