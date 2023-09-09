@@ -69,8 +69,28 @@ const Affirmations = () => {
   useEffect(() => {
     notifyWelcome();
   }, []);
+  
 
   function stopCapture() {
+
+    var multilineString ='Plan 1:' +
+            ' Plan Name: Rakuten Link Prepaid 30-Day Plan  \n          ' +
+            'Price: $30 per month'            +
+            'Data: 10GB of high-speed data'+
+            'Voice: Unlimited talk and text  ' +
+            'International Roaming: Not included'            +
+            'Data rollover (unused data carries over to the next month) \n'+
+              
+            'Plan 2:' +
+            ' Plan Name: Rakuten Mobile Unlimited+          ' +
+            'Price: $60 per month'            +
+            'Type: Post Paid'+
+            'Data: Unlimited high-speed data (with a soft data cap at 50GB)' +
+            'Voice: Unlimited talk and text'            +
+            'International Roaming: Included (with a daily data limit)';
+      
+    
+   
     SpeechRecognition.stopListening();
     console.log(transcript);
     var matchedCategories = positiveAffirmations.filter(
@@ -84,6 +104,7 @@ const Affirmations = () => {
       rate: 0.9,
     });
     setNotes((prevArray) => [...prevArray, transcript]);
+    setNotes((prevArray) => [...prevArray, multilineString])
 
     notifyAddNote();
   }
@@ -165,7 +186,7 @@ const Affirmations = () => {
               <Container maxWidth="lg">
                 <Grid container spacing={4}>
                   {notes.map((note) => (
-                    <Grid item xs={12} sm={6} md={6}>
+                    <Grid item xs={12} sm={12} md={12} style={{display:'flex'}}>
                       <Card className={classes.card}>
                         <CardContent className={classes.cardContent}>
                           <Typography
