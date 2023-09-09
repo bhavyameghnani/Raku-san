@@ -80,7 +80,7 @@ const Affirmations = () => {
     if (matchedCategories.length > 0)
       setPoints(points + parseInt(matchedCategories[0].points));
     speak({
-      text: "Positive Affirmation Note has been made for " + transcript,
+      text: "Query has been made for " + transcript,
       rate: 0.9,
     });
     setNotes((prevArray) => [...prevArray, transcript]);
@@ -107,6 +107,9 @@ const Affirmations = () => {
     <React.Fragment>
       <CssBaseline />
       <Container maxWidth="lg">
+        <br />
+        <br />
+        <br />
         <Grid container component="main" className={classes.root}>
           <CssBaseline />
           <Grid
@@ -165,13 +168,13 @@ const Affirmations = () => {
               <Container maxWidth="lg">
                 <Grid container spacing={4}>
                   {notes.map((note) => (
-                    <Grid item xs={12} sm={6} md={6}>
+                    <Grid item xs={12}>
                       <Card className={classes.card}>
                         <CardContent className={classes.cardContent}>
                           <Typography
                             gutterBottom
                             variant="body1"
-                            component="h2"
+                            component="h1"
                           >
                             {note}
                           </Typography>
@@ -184,7 +187,7 @@ const Affirmations = () => {
             </div>
           </Grid>
           <Grid item xs={12}>
-            <AffirmationsTable />
+            {/* <AffirmationsTable /> */}
           </Grid>
         </Grid>
       </Container>
