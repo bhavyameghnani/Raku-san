@@ -122,10 +122,29 @@ def generateIdeaDetailsOnboard():
     vectorstore = get_vectorstore(text_chunks)
     response = get_conversation_chain(vectorstore)
     json_prompt="Act as a lead tech support guy which is responsible to answer user query on why private information is required for rakhuten mobile app. Customer Query is : {0}".format(ideaDetails)
-    prompt_answer=get_chatgpt_response(json_prompt)
+    prompt_answer=get_chatgpt_response1(json_prompt)
     return {'answer':prompt_answer}
     
 
+def get_chatgpt_response1(message):
+    try:
+        print("Inside GPT 3.5 turbo")
+        
+        # openai.api_key = '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'
+
+        
+        chat = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",max_tokens=1024, temperature=0,messages=[{"role": "system", "content": "You are a experience support leads who works in Rakuten Mobile customer support"},
+                                             {
+                                                 "role": "user", "content": message
+                                             },]
+        )
+        reply = chat.choices[0].message.content
+        return reply
+    except Exception as e:
+        print(e)
+        print("Inside Exception")
+        return str(e)
 
 
 def get_chatgpt_response(prompt):
