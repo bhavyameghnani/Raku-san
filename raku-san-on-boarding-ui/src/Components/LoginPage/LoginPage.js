@@ -359,6 +359,10 @@ export default function LoginPage() {
           <Typography component="h1" variant="h5">
             Customer Onboarding with Raku-san
           </Typography>
+
+          <Typography component="h6" variant="h6" style={{padding:'10px',fontSize:'14px',color:'red'}}>
+          🪙 Collect points after completion of each steps
+          </Typography>
           <br />
           <Box sx={{ maxWidth: 600 }}>
       <Stepper activeStep={activeStep} orientation="vertical">
@@ -403,6 +407,9 @@ export default function LoginPage() {
           </Step>
         ))}
       </Stepper>
+
+
+      
       {activeStep === steps.length && (
         <Paper square elevation={0} sx={{ p: 3 }}>
           <Typography>All steps completed - you&apos;re finished</Typography>
@@ -412,6 +419,10 @@ export default function LoginPage() {
         </Paper>
       )}
     </Box>
+    <Typography component="h1" variant="h5" style={{padding:'10px',fontSize:'14px',color:'grey',fontWeight:'bold'}}>
+    👨‍💻 Raku-san as your Privacy Guardian
+          </Typography>
+
     <Grid item container lg={12} sm={12} md={12} className="shadow" style={{paddingTop:'10px',marginBottom:'20px',minHeight:'300px',maxHeight:'300px',border:'2px solid lightgrey',overflow:'auto'}}>
 
 
@@ -424,10 +435,10 @@ export default function LoginPage() {
 
                           
                           
-                          <p style={{border:'1px solid lightgrey',padding:'5px',borderRadius:'10px',backgroundColor:'lightgrey'}}>{row.response}</p></Grid>}
+                       <p style={{fontSize:'20px'}}> 👤</p>  <p style={{border:'1px solid lightgrey',padding:'5px',borderRadius:'10px',backgroundColor:'lightgrey'}}>{row.response}</p></Grid>}
                         {index%2!=0 && <Grid lg={12} md={12} sm={12} style={{textAlign:'left',marginRight:'20%',padding:'0px 10px 10px 10px',marginRight:'100px'}}>
                           
-                        <p style={{border:'1px solid lightgrey',padding:'5px',borderRadius:'10px',backgroundColor:'lightblue',
+                        <p style={{fontSize:'20px'}}>   👨‍💻 </p> <p style={{border:'1px solid lightgrey',padding:'5px',borderRadius:'10px',backgroundColor:'lightblue',
                       display: 'grid' ,whiteSpace: 'pre-wrap',wordWrap:'break-word'
                       }}>{row.response}</p>
                           </Grid>}
