@@ -189,11 +189,7 @@ const Affirmations = () => {
               <Container maxWidth="lg">
                 <Grid container spacing={4}>
                   {notes.map((note) => (
-<<<<<<< HEAD
                     <Grid item xs={12} sm={12} md={12} style={{display:'flex'}}>
-=======
-                    <Grid item xs={12}>
->>>>>>> a52b108a2bc2f5eb84bb2f6d62c7803790f5e44e
                       <Card className={classes.card}>
                         <CardContent className={classes.cardContent}>
                           <Typography
