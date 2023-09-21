@@ -62,19 +62,19 @@ const useStyles = makeStyles((theme) => ({
   },
   promotion:
   {
-    backgroundImage:`url("https://global.rakuten.com/corp/news/assets/img/press/20200930_5G_2_en.JPG")`,
+    backgroundImage:`url("https://cdn.educba.com/academy/wp-content/uploads/2017/02/Customer-Support-1.jpg.webp")`,
         backgroundRepeat:'no-repeat',
         backgroundSize:'cover'
   },
   promotion1:
   {
-    backgroundImage:`url("https://gaijinpot.scdn3.secure.raxcdn.com/app/uploads/sites/4/2021/04/GPBlog_MobilePlans_ComparisonTable-1024x640.jpg")`,
+    backgroundImage:`url("https://s.financesonline.com/uploads/2019/09/How-to-Provide-Great-Online-Customer-Service-main-final.jpg")`,
         backgroundRepeat:'no-repeat',
         backgroundSize:'cover'
   },
   promotion2:
   {
-    backgroundImage:`url("https://network.mobile.rakuten.co.jp/assets/img/fee/saikyo-plan/en/ladder-pc.png")`,
+    backgroundImage:`url("https://www.liveabout.com/thmb/JC4y1P5e3GcHY7TZMUgRfQFG9qg=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/providing-excellent-customer-service-2951744-v4-5b730d1646e0fb005012a364.png")`,
         backgroundRepeat:'no-repeat',
         backgroundSize:'cover'
   }
@@ -251,7 +251,7 @@ export default function Workspace() {
   };
   const [userquery,setuserquery]=React.useState('')
 
-  const MINUTE_MS = 5000;
+  const MINUTE_MS = 3000;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -265,7 +265,7 @@ export default function Workspace() {
     <React.Fragment>
       <CssBaseline />
       {loader && <Spinner></Spinner>}
-      <Header title="Raku-san Support GPT" />
+      <Header title="Nomu-San Support GPT" activeMenu="Quick Search"/>
 
       <Dialog
         open={open}
@@ -314,15 +314,15 @@ export default function Workspace() {
               alt="Remy Sharp"
               src="https://media.licdn.com/dms/image/C4D03AQF9mLPOG-UkSA/profile-displayphoto-shrink_400_400/0/1595870041988?e=1695859200&v=beta&t=3yeqGiFHW80XksNBszcVUzr54lE1RMxx2VrtGZyMr40"
             />
-            <Avatar
+            {/* <Avatar
               alt="Travis Howard"
               src="https://media.licdn.com/dms/image/C4D03AQH_eyBZ31bdCA/profile-displayphoto-shrink_400_400/0/1627129228561?e=1695859200&v=beta&t=9kyL0kmxVFlvI2Z6vK6jvBEqvlCnLXqhQi6yAjmlvko"
-            />
+            /> */}
             <Avatar
               alt="Travis Howard"
               src="https://media.licdn.com/dms/image/D4D03AQEhAsaviJSCMg/profile-displayphoto-shrink_100_100/0/1682155391773?e=1695859200&v=beta&t=huJhWXZpOCDUeQHVFZqYMV0GHCsodDZ1jAcObxKhToc"
             />
-            <Avatar
+            {/* <Avatar
               alt="Cindy Baker"
               src="https://media.licdn.com/dms/image/D4E03AQHLgz81wUXPmg/profile-displayphoto-shrink_100_100/0/1669743796427?e=1695859200&v=beta&t=WC6mcR7NXaOibvUfjxI8pn5PA9vuCVNfgoIqbMzs83A"
             />
@@ -337,7 +337,7 @@ export default function Workspace() {
             <Avatar
               alt="Cindy Baker"
               src="https://media.licdn.com/dms/image/D4D03AQHyG7KEszqt3Q/profile-displayphoto-shrink_100_100/0/1675850258776?e=1695859200&v=beta&t=tNrpkzpbt6tNE-rdhasnuj21vKLTh6pPMWfcLrl6L9o"
-            />
+            /> */}
             <Typography color="primary" variant="h6" gutterBottom>
               <b>
                 <i>Connect with Social Media Tools:</i>
@@ -572,7 +572,7 @@ export default function Workspace() {
                           </Grid>}
 
 
-                          {row.url &&    <img style={{width:'25%',marginLeft:'6%'}}src={row.url} alt="Chat Conversation " />}
+                          {row.url &&    <img style={{width:'50%',marginLeft:'6%'}}src={row.url} alt="Chat Conversation " />}
 
                         </Grid>
                     )
@@ -615,7 +615,7 @@ export default function Workspace() {
                     </Grid>
                     <Grid item xs={10}>
                       <Typography variant="h6" gutterBottom>
-                        Raku-san Real-time Response Generator
+                        Nomu-San Real-time Response Generator
                       </Typography>
                     </Grid>
                   </Grid>
@@ -648,7 +648,7 @@ export default function Workspace() {
                         color="secondary"
                         onClick={(e)=>handleIdeaDetails(e)}
                       >
-                        Enhance Response using Raku-san
+                        Enhance Response using Nomu-San
                       </Button>
                     </Grid>
                   </Grid>
@@ -663,7 +663,7 @@ export default function Workspace() {
 }
 
 const mainFeaturedPost = {
-  title: "Raku-san Support Workspace",
+  title: "Nomu-San Support Workspace",
   description:
     "Enhance the capabilities of customer support team, improve response times, and ultimately provide better service to customers. ",
   image:

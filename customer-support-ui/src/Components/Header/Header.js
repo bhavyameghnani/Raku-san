@@ -9,10 +9,13 @@ import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import { NavLink } from "react-router-dom";
 import { clsx } from 'clsx';
+// import WorkspaceFeaturedPost from "../Workspace/WorkspaceFeaturedPost"
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
+    backgroundColor:'#272525',
+    color:'blanchedalmond',
   },
   toolbarTitle: {
     flex: 1,
@@ -20,22 +23,26 @@ const useStyles = makeStyles((theme) => ({
   toolbarSecondary: {
     justifyContent: "space-between",
     overflowX: "auto",
+    backgroundColor:'aquamarine',
+    color:'black',
     //fontSize: '15'
   },
   toolbarLink: {
     padding: theme.spacing(1),
     flexShrink: 0,
+    textDecoration:'none'
   },
   borderbottom:
   {
-    borderBottom:'3px solid lightblue'
+    borderBottom:'3px solid blue',
+    borderRadius:'3px',
   },
 }));
 
 const sections = [
   { title: "Quick Search", url: "#/" },
-  { title: "Create Project Workspace", url: "#/" },
-  { title: "My Profile Analytics", url: "#/" },
+  { title: "Create Personalised Plan", url: "#/affirmations" },
+  { title: "Game", url: "#/game" },
   { title: "Contact us", url: "#/" },
 ];
 
@@ -47,7 +54,7 @@ export default function Header(props) {
     <React.Fragment>
       <Toolbar className={classes.toolbar}>
         <Button color="inherit" size="small">
-          Subscribe
+          {/* Subscribe */}
         </Button>
         <Typography
           component="h2"
@@ -78,7 +85,7 @@ export default function Header(props) {
             // style={{borderBottom:'1px solid blue'}}
             key={section.title}
             className={clsx( {                  
-              [classes.borderbottom]: index==0, 
+              [classes.borderbottom]: (props.activeMenu==section.title), 
               [classes.toolbarLink]:true             
               
             })}
@@ -90,11 +97,25 @@ export default function Header(props) {
           </Link>
         ))}
       </Toolbar>
+     
     </React.Fragment>
   );
 }
+
+
+// const mainFeaturedPost = {
+//   title: "Nomu-San Support Workspace",
+//   description:
+//     "Enhance the capabilities of customer support team, improve response times, and ultimately provide better service to customers. ",
+//   image:
+//     "https://media.licdn.com/dms/image/D5612AQG-FsJ_6TJPuA/article-cover_image-shrink_720_1280/0/1679628763431?e=2147483647&v=beta&t=6cM4C82xiRe7XMavhoNQYGsjSd2ZgrAsE4StFT8J_VE",
+//   imgText: "main image description",
+//   linkText: "Continue reading…",
+// };
+
 
 Header.propTypes = {
   sections: PropTypes.array,
   title: PropTypes.string,
 };
+
