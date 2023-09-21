@@ -3,6 +3,10 @@ from flask_cors import CORS, cross_origin
 import json
 import os
 import openai
+
+from Utils.LLMUtils import blog_generator, campaign_generator, email_generator, get_chat_model_completions, getFirstAdvertisement
+from Utils.Utils import extract_dictionary_from_string, formatParagraphs
+
 import base64
 from datetime import datetime
 from pymongo import MongoClient
@@ -19,7 +23,7 @@ import openai
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
-api_key="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"
+api_key="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"
 openai.api_key=api_key
 os.environ["OPENAI_API_KEY"] = api_key
 
@@ -65,29 +69,53 @@ def generateIdeaDetails():
     
     test_data=[
   {
-    "title": "Device Compatibility Query",
-    "query": "I'm thinking of getting a new smartphone. How can I check if it's compatible with Rakuten Mobile's network?",
-    "url": "https://esimgohub.com/wp-content/uploads/2023/02/gif3.gif"
-  },
-  {
-    "title": "Roaming Assistance",
-    "query": "I'm traveling abroad soon. How can I make sure I can use my phone while I'm there?",
-    "url": "https://media3.giphy.com/media/dNVoT4sykcJi72bfhW/200w.gif?cid=790b7611003nkf2bsg5xw7jlhjpncp6gi0axxnsxjq1kewxh&ep=v1_gifs_search&rid=200w.gif&ct=g"
-  },
-  {
-    "title": "Billing Inquiry",
-    "query": "I received my bill, and there's a charge I don't understand. Can you explain it to me?",
-    "url": "https://media1.giphy.com/media/tlVIoU940wRDkMUqrp/200w_d.gif"
-  },
-  {
-    "title": "Voicemail Setup",
-    "query": "I've never set up my voicemail. Can you guide me on how to do that?",
-    "url": "https://images.squarespace-cdn.com/content/v1/5c253c6eb10598834858f4f8/1609730443692-9V0Q8LIAYC33VAW9O1FX/ezgif.com-gif-maker+%283%29.gif"
-  },
-  {
+
     "title": "Network Outage Query",
+
     "query": "My mobile data isn't working, and I can't make calls. Is there a network outage in my area?",
-    "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSecREYJQW0PPY8UdMiUV9DYt9pYMt5Vxua0g&usqp=CAU"
+
+    "url": "https://media.tenor.com/Yv2zYyb_T24AAAAM/flutter-network-check-check-network-connection-flutter.gif"
+
+  },
+
+  {
+
+    "title": "Roaming Assistance",
+
+    "query": "I'm traveling abroad soon. How can I make sure I can use my phone while I'm there?",
+
+    "url": "https://i.gifer.com/origin/bc/bc2f0836f814b6e491768a5629450dc1_w200.gif"
+
+  },
+
+  {
+
+    "title": "Billing Inquiry",
+
+    "query": "I received my bill, and there's a charge I don't understand. Can you explain it to me?",
+
+    "url": "https://help.commonsku.com/hubfs/9Qiba7gs5u-gif.gif"
+
+  },
+
+  {
+
+    "title": "Voicemail Setup",
+
+    "query": "I've never set up my voicemail. Can you guide me on how to do that?",
+
+    "url": "https://images.squarespace-cdn.com/content/v1/5c253c6eb10598834858f4f8/1609730443692-9V0Q8LIAYC33VAW9O1FX/ezgif.com-gif-maker+%283%29.gif"
+
+  },
+
+  {
+
+    "title":"Call forwarding",
+
+    "query":"I need to set up call forwarding to another number. How can I do that?",
+
+    "url": "https://www.ringcentral.com/us/en/blog/wp-content/uploads/2022/06/Forward-calls-mobile-GIF.gif"
+
   }
 ]
 
@@ -255,6 +283,151 @@ def generateUserStakeholders():
     print(result['answer'])
     return {'status': 'success', 'data': result['answer']}
 
+
+@app.route('/generateFirstCampaign', methods=["POST"])
+def generateFirstCampaign():
+    file_name=''
+    
+    sme_name=request.form['sme_name']
+    sme_business=request.form['sme_business']
+    sme_location=request.form['sme_location']
+    sme_USP=request.form['sme_USP']
+
+    for file in  request.files.getlist('file'):
+        file.save(file.filename)
+        file_name=file.filename
+
+    text_all=''
+
+    if(len(file_name)>0):
+
+        df = pd.read_csv(file_name)
+
+        for index, row in df.iterrows():
+            text_all=text_all+"\n\n"+str(row['ProductID'])+ " "+str(row['ProductName'])+ " "+str('ProductType')+" "+str(row['Price'])+ " "+str(row['Calories'])+" "+" "+str(row['Availability'])+ " "+" "+str(row['SpecialNotes'])
+        
+        print(len(text_all))
+
+        conversation = getFirstAdvertisement(sme_name, sme_business, sme_location, sme_USP, text_all) 
+
+    else:
+        conversation = getFirstAdvertisement(sme_name, sme_business, sme_location, sme_USP) 
+
+    response = extract_dictionary_from_string(get_chat_model_completions(conversation))
+
+    print(response)
+    
+    return {'status':'success','data': response}
+
+
+@app.route('/runCampaign', methods=["POST"])
+def runCampaign():
+    file_name=''
+    
+    mode=int(request.form["mode"])
+    sme_name=request.form['sme_name']
+    sme_business=request.form['sme_business']
+    sme_location=request.form['sme_location']
+    sme_USP=request.form['sme_USP']
+
+    for file in  request.files.getlist('file'):
+        file.save(file.filename)
+        file_name=file.filename
+
+    text_all=''
+
+    if(len(file_name)>0):
+
+        df = pd.read_csv(file_name)
+
+        for index, row in df.iterrows():
+            text_all=text_all+"\n\n"+str(row['ProductID'])+ " "+str(row['ProductName'])+ " "+str('ProductType')+" "+str(row['Price'])+ " "+str(row['Calories'])+" "+" "+str(row['Availability'])+ " "+" "+str(row['SpecialNotes'])
+        
+        print(len(text_all))
+
+        conversation = campaign_generator(mode, sme_name, sme_business, sme_location, sme_USP, text_all) 
+
+    else:
+        conversation = campaign_generator(mode, sme_name, sme_business, sme_location, sme_USP) 
+
+    response = extract_dictionary_from_string(get_chat_model_completions(conversation))
+    
+    return {'status':'success','data': response}
+
+
+
+@app.route('/createBlog', methods=["POST"])
+def createBlog():
+    file_name=''
+    
+    sme_name=request.form['sme_name']
+    sme_business=request.form['sme_business']
+    sme_location=request.form['sme_location']
+    sme_USP=request.form['sme_USP']
+
+    for file in  request.files.getlist('file'):
+        file.save(file.filename)
+        file_name=file.filename
+
+    text_all=''
+
+    if(len(file_name)>0):
+
+        df = pd.read_csv(file_name)
+
+        for index, row in df.iterrows():
+            text_all=text_all+"\n\n"+str(row['ProductID'])+ " "+str(row['ProductName'])+ " "+str('ProductType')+" "+str(row['Price'])+ " "+str(row['Calories'])+" "+" "+str(row['Availability'])+ " "+" "+str(row['SpecialNotes'])
+        
+        print(len(text_all))
+
+        conversation = blog_generator(sme_name, sme_business, sme_location, sme_USP, text_all) 
+
+    else:
+        conversation = blog_generator(sme_name, sme_business, sme_location, sme_USP) 
+
+    # response = extract_dictionary_from_string(get_chat_model_completions(conversation))
+
+    response = formatParagraphs(get_chat_model_completions(conversation))
+
+    print(response)
+    
+    return {'status':'success','data': response}
+
+
+@app.route('/generatePersonalizedEmail', methods=["POST"])
+def generatePersonalizedEmail():
+    
+    sme_name=request.form['sme_name']
+    sme_business=request.form['sme_business']
+    sme_location=request.form['sme_location']
+    sme_USP=request.form['sme_USP']
+
+    cust_name=request.form['cust_name']
+    cust_last_visit=request.form['cust_last_visit']
+    cust_past_purchase=request.form['cust_past_purchase']
+    cust_dob=request.form['cust_dob']
+    cust_preferences=request.form['cust_preferences']
+    cust_email=request.form['cust_email']
+    cust_freq_of_visits=request.form['cust_freq_of_visits']
+    cust_preferred_time=request.form['cust_preferred_time']
+
+    conversation = email_generator(sme_name, sme_business, sme_location, sme_USP, cust_name, cust_last_visit, cust_past_purchase, cust_dob, cust_preferences, cust_email, cust_freq_of_visits, cust_preferred_time) 
+
+    # response = extract_dictionary_from_string(get_chat_model_completions(conversation))
+
+    # response = formatParagraphs(get_chat_model_completions(conversation))
+
+    response = get_chat_model_completions(conversation)
+    response=response.replace("\\","")
+    print(response)
+    json_data=[]
+    # json_data.append(response)
+    response=json.loads(response,strict=False)
+    json_data.append(response)
+    
+    # print(response['Subject'])
+    
+    return {'status':'success','data': json_data}
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
