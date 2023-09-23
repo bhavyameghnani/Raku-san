@@ -537,7 +537,7 @@ export default function Workspace() {
                     id="outlined-multiline-static"
                     label="Customer Query"
                     multiline
-                    maxRows={1}
+                    maxRows={3}
                     fullWidth
                     value={userquery}
                     variant="outlined"

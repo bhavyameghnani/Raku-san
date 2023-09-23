@@ -6,6 +6,7 @@ import openai
 
 from Utils.LLMUtils import blog_generator, campaign_generator, email_generator, get_chat_model_completions, getFirstAdvertisement
 from Utils.Utils import extract_dictionary_from_string, formatParagraphs
+from PyPDF2 import PdfReader
 
 import base64
 from datetime import datetime
@@ -23,7 +24,7 @@ import openai
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
-api_key="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"
+api_key="test"
 openai.api_key=api_key
 os.environ["OPENAI_API_KEY"] = api_key
 
@@ -32,6 +33,16 @@ os.environ["OPENAI_API_KEY"] = api_key
 @cross_origin(support_credentials=True)
 def hello():
     return "Welcome to Raku-San APP by Team SPARK"
+
+
+def get_pdf_text(pdf_files):    
+    text = ""
+    for row in pdf_files:
+        pdf_reader = PdfReader(row)
+        for page in pdf_reader.pages:
+            
+            text += page.extract_text()
+    return text
 
 
 def get_text_chunks(text):
@@ -52,88 +63,101 @@ def get_vectorstore(text_chunks):
 
 
 def get_conversation_chain(vectorstore):
-    llm = ChatOpenAI(temperature=0.2, model_name='gpt-3.5-turbo')
+    llm = ChatOpenAI(temperature=0.4,model_name='gpt-3.5-turbo')
     memory = ConversationBufferMemory(
         memory_key='chat_history', return_messages=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
         retriever=vectorstore.as_retriever(),
-        memory=memory
+        memory=memory,
     )
     return conversation_chain
+
 
 
 @app.route('/generateIdeaDetails', methods=['GET'])
 @cross_origin(support_credentials=True)
 def generateIdeaDetails():
     
-    test_data=[
-  {
-
-    "title": "Network Outage Query",
-
-    "query": "My mobile data isn't working, and I can't make calls. Is there a network outage in my area?",
-
-    "url": "https://media.tenor.com/Yv2zYyb_T24AAAAM/flutter-network-check-check-network-connection-flutter.gif"
-
-  },
-
-  {
-
-    "title": "Roaming Assistance",
-
-    "query": "I'm traveling abroad soon. How can I make sure I can use my phone while I'm there?",
-
-    "url": "https://i.gifer.com/origin/bc/bc2f0836f814b6e491768a5629450dc1_w200.gif"
-
-  },
-
-  {
-
-    "title": "Billing Inquiry",
-
-    "query": "I received my bill, and there's a charge I don't understand. Can you explain it to me?",
-
-    "url": "https://help.commonsku.com/hubfs/9Qiba7gs5u-gif.gif"
-
-  },
-
-  {
-
-    "title": "Voicemail Setup",
-
-    "query": "I've never set up my voicemail. Can you guide me on how to do that?",
-
-    "url": "https://images.squarespace-cdn.com/content/v1/5c253c6eb10598834858f4f8/1609730443692-9V0Q8LIAYC33VAW9O1FX/ezgif.com-gif-maker+%283%29.gif"
-
-  },
-
-  {
-
-    "title":"Call forwarding",
-
-    "query":"I need to set up call forwarding to another number. How can I do that?",
-
-    "url": "https://www.ringcentral.com/us/en/blog/wp-content/uploads/2022/06/Forward-calls-mobile-GIF.gif"
-
-  }
-]
-
-    ideaDetails = request.args.get("prompt")
     
-    text_chunks = get_text_chunks(ideaDetails)
-    vectorstore = get_vectorstore(text_chunks)
-    response = get_conversation_chain(vectorstore)
-    result = response(
-        {"question": "Act as a tech specialist your task is to provide consolidated resolutions for the user query. The response should not be more than 100-200 words. Also please response by keeping entire converstaion into consideration. Please note the user is 30 year and not much tech savy."})
-    prompt_answer=result['answer']
     
-    json_prompt="""I will be providing you the customer query and array of json data which contains three fields title,query and url. Your task is to analyse customer query and give me the url which best suits based on the title and query. Provide only the one url. For example answer should be in this format Url : https://abc.com 
-        Customer Query : {0}
-        Json Data : {1}
-    """.format(ideaDetails,test_data)
-    url=get_chatgpt_response(json_prompt)
-    return {'answer':prompt_answer,'url':str(url).split(": ")[1]}
+#     test_data=[
+#   {
+
+#     "title": "Network Outage Query",
+
+#     "query": "My mobile data isn't working, and I can't make calls. Is there a network outage in my area?",
+
+#     "url": "https://media.tenor.com/Yv2zYyb_T24AAAAM/flutter-network-check-check-network-connection-flutter.gif"
+
+#   },
+
+#   {
+
+#     "title": "Roaming Assistance",
+
+#     "query": "I'm traveling abroad soon. How can I make sure I can use my phone while I'm there?",
+
+#     "url": "https://i.gifer.com/origin/bc/bc2f0836f814b6e491768a5629450dc1_w200.gif"
+
+#   },
+
+#   {
+
+#     "title": "Billing Inquiry",
+
+#     "query": "I received my bill, and there's a charge I don't understand. Can you explain it to me?",
+
+#     "url": "https://help.commonsku.com/hubfs/9Qiba7gs5u-gif.gif"
+
+#   },
+
+#   {
+
+#     "title": "Voicemail Setup",
+
+#     "query": "I've never set up my voicemail. Can you guide me on how to do that?",
+
+#     "url": "https://images.squarespace-cdn.com/content/v1/5c253c6eb10598834858f4f8/1609730443692-9V0Q8LIAYC33VAW9O1FX/ezgif.com-gif-maker+%283%29.gif"
+
+#   },
+
+#   {
+
+#     "title":"Call forwarding",
+
+#     "query":"I need to set up call forwarding to another number. How can I do that?",
+
+#     "url": "https://www.ringcentral.com/us/en/blog/wp-content/uploads/2022/06/Forward-calls-mobile-GIF.gif"
+
+#   }
+# ]
+
+#     ideaDetails = request.args.get("prompt")
+    
+#     text_chunks = get_text_chunks(ideaDetails)
+#     vectorstore = get_vectorstore(text_chunks)
+#     response = get_conversation_chain(vectorstore)
+#     result = response(
+#         {"question": "Act as a tech specialist your task is to provide consolidated resolutions for the user query. The response should not be more than 100-200 words. Also please response by keeping entire converstaion into consideration. Please note the user is 30 year and not much tech savy."})
+#     prompt_answer=result['answer']
+    
+#     json_prompt="""I will be providing you the customer query and array of json data which contains three fields title,query and url. Your task is to analyse customer query and give me the url which best suits based on the title and query. Provide only the one url. For example answer should be in this format Url : https://abc.com 
+#         Customer Query : {0}
+#         Json Data : {1}
+#     """.format(ideaDetails,test_data)
+#     url=get_chatgpt_response(json_prompt)
+
+    user_query = request.args.get("prompt")
+    file_name=['FINTOS dataset.pdf','OneStock dataset.pdf']
+    pdf_text=get_pdf_text(file_name)
+    print(len(pdf_text))
+    text_chunks=get_text_chunks(pdf_text)
+    vectorstore=get_vectorstore(text_chunks)
+    response=get_conversation_chain(vectorstore)
+    user_query="Act as a technical specialist your task is to find query of "+ str(user_query)
+    result = response({"question": user_query})    
+    return {'answer':result['answer'],'url':''}
     
 
 
